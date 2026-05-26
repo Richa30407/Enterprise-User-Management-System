@@ -1,0 +1,415 @@
+﻿@model UserManagement.Models.UserModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<style>
+
+    body {
+        background: #ffffff;
+        min-height: 100vh;
+        font-family: 'Segoe UI';
+    }
+
+    .main-heading {
+        text-align: center;
+        margin-top: 40px;
+        margin-bottom: 8px;
+        font-size: 52px;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: 1px;
+    }
+
+    .sub-heading {
+        text-align: center;
+        color: #64748b;
+        font-size: 18px;
+        margin-bottom: 40px;
+    }
+
+    .register-container {
+        margin-bottom: 50px;
+    }
+
+    .register-card {
+        background: #dbeafe;
+        border-radius: 24px;
+        padding: 42px;
+        box-shadow: 0px 12px 35px rgba(15,23,42,0.12);
+        border: 1px solid #bfdbfe;
+    }
+
+    .form-title {
+        text-align: center;
+        font-size: 34px;
+        font-weight: 700;
+        color: #1e3a8a;
+        margin-bottom: 35px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 8px;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 14px;
+        padding: 13px;
+        border: 1px solid #cbd5e1;
+        background-color: rgba(255,255,255,0.95);
+        font-size: 16px;
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 0.18rem rgba(37,99,235,0.15);
+            background-color: white;
+        }
+
+    .input-group-text {
+        border-radius: 14px 0 0 14px;
+        background-color: #eff6ff;
+        border: 1px solid #cbd5e1;
+    }
+
+    .btn-register {
+        background: linear-gradient( 90deg, #1e3a8a, #2563eb);
+        border: none;
+        border-radius: 14px;
+        padding: 14px;
+        font-size: 18px;
+        font-weight: 600;
+        color: white;
+        transition: 0.3s;
+    }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            opacity: 0.96;
+            color: white;
+        }
+
+    .login-text {
+        text-align: center;
+        margin-top: 24px;
+        color: #334155;
+        font-weight: 500;
+    }
+
+    .login-link {
+        text-decoration: none;
+        font-weight: 700;
+        color: #2563eb;
+    }
+
+        .login-link:hover {
+            text-decoration: underline;
+        }
+
+    .form-check-label {
+        color: #1e293b;
+    }
+
+    .text-danger {
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .success-message {
+        background-color: #bfdbfe;
+        border-left: 5px solid #2563eb;
+        color: #1e3a8a;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+</style>
+
+<div class="container register-container">
+
+    <div class="main-heading">
+        Welcome
+    </div>
+
+    <div class="sub-heading">
+        Create your account to continue
+    </div>
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-7">
+
+            <div class="register-card">
+
+                <div class="form-title">
+                    Registration Form
+                </div>
+
+                @if (ViewBag.Message != null)
+                {
+                    <div class="success-message">
+                        @ViewBag.Message
+                    </div>
+                }
+
+                <form method="post">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Full Name
+                        </label>
+
+                        <input asp-for="FullName"
+                               class="form-control"
+                               placeholder="Enter full name" />
+
+                        <span asp-validation-for="FullName"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Username
+                        </label>
+
+                        <input asp-for="Username"
+                               class="form-control"
+                               placeholder="Enter username" />
+
+                        <span asp-validation-for="Username"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Password
+                        </label>
+
+                        <input asp-for="Password"
+                               type="password"
+                               class="form-control"
+                               placeholder="Enter password" />
+
+                        <span asp-validation-for="Password"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Confirm Password
+                        </label>
+
+                        <input asp-for="ConfirmPassword"
+                               type="password"
+                               class="form-control"
+                               placeholder="Confirm password" />
+
+                        <span asp-validation-for="ConfirmPassword"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Email ID
+                        </label>
+
+                        <input asp-for="EmailId"
+                               class="form-control"
+                               placeholder="Enter email address" />
+
+                        <span asp-validation-for="EmailId"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Mobile Number
+                        </label>
+
+                        <input asp-for="MobileNo"
+                               maxlength="10"
+                               class="form-control"
+                               placeholder="Enter 10-digit mobile number"
+                               oninput="this.value=this.value.replace(/[^0-9]/g,'');" />
+
+                        <span asp-validation-for="MobileNo"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Date of Birth
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+                                📅
+                            </span>
+
+                            <input asp-for="DOB"
+                                   id="dobPicker"
+                                   class="form-control"
+                                   placeholder="Select Date of Birth" />
+
+                        </div>
+
+                        <span asp-validation-for="DOB"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Role
+                        </label>
+
+                        <select asp-for="RoleId"
+                                class="form-select">
+
+                            <option value="">
+                                -- Select Role --
+                            </option>
+
+                            <option value="1">
+                                Admin
+                            </option>
+
+                            <option value="2">
+                                User
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="RoleId"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+
+                        <label class="form-label d-block">
+                            Gender
+                        </label>
+
+                        <div class="form-check form-check-inline">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   asp-for="Gender"
+                                   value="Male" />
+
+                            <label class="form-check-label">
+                                Male
+                            </label>
+                        </div>
+
+                        <div class="form-check form-check-inline">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   asp-for="Gender"
+                                   value="Female" />
+
+                            <label class="form-check-label">
+                                Female
+                            </label>
+                        </div>
+
+                        <div class="form-check form-check-inline">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   asp-for="Gender"
+                                   value="Other" />
+
+                            <label class="form-check-label">
+                                Other
+                            </label>
+                        </div>
+
+                        <br />
+
+                        <span asp-validation-for="Gender"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid">
+
+                        <button type="submit"
+                                class="btn btn-register">
+
+                            Register
+
+                        </button>
+
+                    </div>
+
+                    <div class="login-text">
+
+                        Already have an account?
+
+                        <a href="/Account/Login"
+                           class="login-link">
+
+                            Login
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+
+        flatpickr("#dobPicker", {
+
+        dateFormat: "Y-m-d",
+
+        altInput: true,
+
+        altFormat: "F j, Y",
+
+        maxDate: "today",
+
+        disableMobile: true,
+
+        monthSelectorType: "dropdown",
+
+        animate: true
+        });
+
+    </script>
+}

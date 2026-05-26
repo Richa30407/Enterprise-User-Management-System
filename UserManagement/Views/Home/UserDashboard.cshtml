@@ -1,0 +1,73 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <style>
+            body {
+                background-color: #f4f7f6;
+                font-family: 'Segoe UI', sans-serif;
+            }
+
+            .navbar {
+                background-color: #2b6cb0 !important;
+            }
+
+            .welcome-card {
+                background: #ffffff;
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+                padding: 3rem 2rem;
+                margin-top: 4rem;
+                text-align: center;
+            }
+
+            .btn-logout {
+                background-color: #e53e3e;
+                color: white;
+                border-radius: 6px;
+            }
+
+                .btn-logout:hover {
+                    background-color: #9b2c2c;
+                    color: white;
+                }
+
+            .welcome-title {
+                color: #1a365d;
+                font-weight: 700;
+            }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">CorePortal <span class="badge bg-white text-primary ms-2" style="font-size:0.75rem;">User Session</span></a>
+            <div class="ms-auto">
+                <a asp-controller="Home" asp-action="Logout" class="btn btn-logout btn-sm px-3">Sign Out</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <div class="welcome-card">
+                    <h2 class="welcome-title mb-3">Welcome Back, @ViewBag.Username! 🎉</h2>
+                    <p class="text-muted fs-5">You have successfully logged into your secure profile.</p>
+                    <hr class="my-4" style="color: #e2e8f0;">
+                    <p class="small text-secondary">Your session is secure. Use the top navigation bar to safely log out when done.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+﻿@model List<UserManagement.Models.UserModel>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <style>
+            body {
+                background-color: #f4f7f6;
+                font-family: 'Segoe UI', sans-serif;
+            }
+
+            .navbar {
+                background-color: #1a365d !important;
+            }
+
+            .main-card {
+                background: #ffffff;
+                border: none;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+                padding: 2rem;
+                margin-top: 2rem;
+            }
+
+            .table-thead {
+                background-color: #2b6cb0;
+                color: white;
+            }
+
+            .btn-logout {
+                background-color: #e53e3e;
+                color: white;
+                border-radius: 6px;
+            }
+
+                .btn-logout:hover {
+                    background-color: #9b2c2c;
+                    color: white;
+                }
+
+            .badge-admin {
+                background-color: #2b6cb0;
+                color: white;
+                font-size: 0.85rem;
+                padding: 0.4rem 0.8rem;
+                border-radius: 50px;
+            }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">CorePortal <span class="badge badge-admin ms-2">Admin Panel</span></a>
+            <div class="ms-auto">
+                <span class="text-white me-3">Welcome, <strong>@ViewBag.Username</strong></span>
+                <a asp-controller="Home" asp-action="Logout" class="btn btn-logout btn-sm px-3">Sign Out</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="main-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold" style="color: #1a365d;">Registered System Users</h4>
+                <span class="text-muted">Total Users: <strong>@Model.Count</strong></span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-thead">
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Username</th>
+                            <th>Email ID</th>
+                            <th>Mobile Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Count > 0)
+                        {
+                            @foreach (var user in Model)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@user.FullName</td>
+                                    <td><span class="badge bg-light text-dark border">@user.Username</span></td>
+                                    <td>@user.EmailId</td>
+                                    <td>@user.MobileNo</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">No users registered yet.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
