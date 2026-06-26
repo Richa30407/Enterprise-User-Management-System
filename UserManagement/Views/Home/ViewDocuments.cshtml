@@ -1,0 +1,506 @@
+@model List<UserManagement.Models.UserDocumentModel>
+
+@{
+    Layout = null;
+    var firstDoc = Model.FirstOrDefault();
+    var docSizes = ViewBag.DocSizes as Dictionary<int, string> ?? new Dictionary<int, string>();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Documents - User Management</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            background-image: url('/User.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 40px 0;
+        }
+
+        .dashboard-container {
+            margin-left: 8%;
+            width: 84%;
+            max-width: 1200px;
+        }
+
+        .page-heading {
+            color: white;
+            font-size: 45px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .main-card {
+            background: #ffffff;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+        }
+
+        .preview-container {
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            height: 620px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .preview-header {
+            background: #f1f5f9;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .doc-item-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .doc-item-card:hover, .doc-item-card.active-card {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08);
+            border-color: #3b82f6;
+            background: #f0f7ff;
+        }
+
+        .meta-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .meta-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 12px;
+            word-break: break-all;
+        }
+
+        .btn-action {
+            height: 48px;
+            border-radius: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+        }
+
+        .doc-tag {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-mandatory {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+
+        .tag-optional {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        /* MOBILE RESPONSIVENESS */
+        @@media(max-width: 992px) {
+            .dashboard-container {
+                margin: 20px auto;
+                width: 95%;
+            }
+            .main-card {
+                padding: 25px;
+            }
+            .preview-container {
+                height: 400px;
+                margin-bottom: 25px;
+            }
+            .page-heading {
+                font-size: 32px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- HEADING OUTSIDE CARD -->
+        <h1 class="page-heading">
+            Uploaded Documents
+        </h1>
+
+        <!-- MAIN CARD -->
+        <div class="main-card">
+            
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert" style="border-radius: 12px;">
+                    <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert" style="border-radius: 12px;">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <div class="row g-4">
+                
+                <!-- LEFT COLUMN: PDF PREVIEW -->
+                <div class="col-lg-7 col-md-12">
+                    <div class="preview-container">
+                        <div class="preview-header">
+                            <span class="fw-bold text-dark d-flex align-items-center gap-2">
+                                <i class="bi bi-eye-fill text-primary"></i> 
+                                Preview: <span id="previewDocName">@(firstDoc?.FileName ?? "No Document")</span>
+                            </span>
+                            <a id="previewOpenBtn" href="/uploads/@(firstDoc?.FilePath)" target="_blank" class="btn btn-sm btn-outline-primary @(firstDoc == null ? "disabled" : "")" style="border-radius: 8px;">
+                                <i class="bi bi-box-arrow-up-right"></i> Open Separately
+                            </a>
+                        </div>
+                        <div class="flex-grow-1 position-relative">
+                            @if (firstDoc != null)
+                            {
+                                <iframe id="pdfPreviewIframe" src="/uploads/@firstDoc.FilePath" style="width: 100%; height: 100%; border: none;">
+                                    <div class="p-4 text-center">
+                                        <p class="text-muted">Your browser does not support embedded PDF previews.</p>
+                                        <a id="fallbackPreviewLink" href="/uploads/@firstDoc.FilePath" target="_blank" class="btn btn-primary">
+                                            <i class="bi bi-box-arrow-up-right"></i> View PDF document
+                                        </a>
+                                    </div>
+                                </iframe>
+                            }
+                            else
+                            {
+                                <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-muted">
+                                    <i class="bi bi-file-earmark-pdf text-secondary" style="font-size: 48px;"></i>
+                                    <p class="mt-2">No documents available for preview.</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: DOCUMENT CARDS LIST -->
+                <div class="col-lg-5 col-md-12 d-flex flex-column justify-content-between">
+                    <div>
+                        <h3 class="mb-4 text-dark fw-bold border-bottom pb-2" style="font-size: 22px;">
+                            <i class="bi bi-files text-primary me-2"></i>My Documents
+                        </h3>
+
+                        <div class="document-list-scroll" style="max-height: 480px; overflow-y: auto; padding-right: 5px;">
+                            @foreach (var doc in Model)
+                            {
+                                var isActive = doc.DocumentId == firstDoc?.DocumentId ? "active-card" : "";
+                                var docSize = docSizes.ContainsKey(doc.DocumentId) ? docSizes[doc.DocumentId] : "Unknown";
+
+                                <div class="doc-item-card @isActive" onclick="selectPreview('@doc.FilePath', '@doc.FileName', this)">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="fw-bold text-dark" style="font-size: 15.5px;">
+                                            @if (doc.DocumentType == "Aadhaar") { <span class="me-1">🪪</span> }
+                                            else if (doc.DocumentType == "PAN") { <span class="me-1">💳</span> }
+                                            else { <span class="me-1">📄</span> }
+                                            @doc.DocumentType Card @if (doc.DocumentType != "Other") { <span class="text-danger">*</span> }
+                                        </span>
+                                    </div>
+
+                                    <div class="meta-label">File Name</div>
+                                    <div class="meta-value text-truncate">@doc.FileName</div>
+
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="meta-label">File Size</div>
+                                            <div class="meta-value">@docSize</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="meta-label">Uploaded On</div>
+                                            <div class="meta-value" style="font-size:13px;">@(doc.UploadedDate.HasValue ? doc.UploadedDate.Value.ToString("dd MMM yyyy") : "N/A")</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center border-top pt-2.5 mt-1">
+                                        <div>
+                                            @if (doc.Status == "Approved")
+                                            {
+                                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1" style="border-radius: 6px; font-size:11px;">
+                                                    <i class="bi bi-check-circle-fill"></i> Approved
+                                                </span>
+                                            }
+                                            else if (doc.Status == "Rejected")
+                                            {
+                                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1" style="border-radius: 6px; font-size:11px;">
+                                                    <i class="bi bi-x-circle-fill"></i> Rejected
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2 py-1" style="border-radius: 6px; font-size:11px;">
+                                                    <i class="bi bi-hourglass-split"></i> Pending
+                                                </span>
+                                            }
+                                        </div>
+
+                                        <div class="d-flex gap-2" onclick="event.stopPropagation();">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" style="border-radius: 8px;" data-bs-toggle="modal" data-bs-target="#replaceModal" data-docid="@doc.DocumentId" data-doctype="@doc.DocumentType">
+                                                <i class="bi bi-arrow-left-right"></i> Replace
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" style="border-radius: 8px;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-docid="@doc.DocumentId" data-filename="@doc.FileName">
+                                                <i class="bi bi-trash3-fill"></i> Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <a asp-controller="Home" asp-action="Dashboard" class="btn btn-dark btn-action w-100 mt-4">
+                        <i class="bi bi-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- REPLACE DOCUMENT MODAL -->
+    <div class="modal fade" id="replaceModal" tabindex="-1" aria-labelledby="replaceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px; overflow: hidden;">
+                <div class="modal-header bg-light border-bottom-0 py-3 px-4">
+                    <h5 class="modal-title fw-bold text-dark" id="replaceModalLabel">
+                        <i class="bi bi-arrow-left-right text-secondary me-2"></i>Replace <span id="replaceDocType">Document</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="replaceForm" asp-action="ReplaceDocument" asp-controller="Home" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="documentId" id="replaceDocIdInput" value="" />
+
+                    <div class="modal-body px-4 py-3">
+                        <p class="text-muted mb-4" style="font-size: 14px;">
+                            Select a new PDF file to replace the existing document. The new file signature, file size, and extension will be verified immediately.
+                        </p>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-dark">Select PDF File <span class="text-danger">*</span></label>
+                            <input type="file" name="pdfFile" id="replacePdfInput" class="form-control" accept=".pdf" required style="height: 48px; border-radius: 10px; padding: 10px;" />
+                            <div class="form-text text-secondary mt-1" style="font-size: 12px;">Only genuine PDF files up to 2 MB are allowed.</div>
+                            
+                            <div id="replaceValidationFeedback" class="alert alert-danger p-2.5 mt-2 fw-semibold d-none" style="border-radius: 10px; font-size: 13px;"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top-0 px-4 pb-4 pt-2">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius: 10px; height: 45px; font-weight: 600; padding: 0 20px;">Cancel</button>
+                        <button type="submit" id="confirmReplaceBtn" class="btn btn-success" style="border-radius: 10px; height: 45px; font-weight: 600; padding: 0 25px;" disabled>
+                            Confirm Replacement
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE DOCUMENT MODAL -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px; overflow: hidden;">
+                <div class="modal-header bg-light border-bottom-0 py-3 px-4">
+                    <h5 class="modal-title fw-bold text-dark" id="deleteModalLabel">
+                        <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Delete Document
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-4 py-3">
+                    <p class="text-dark fw-bold mb-2">Are you sure you want to permanently delete this document?</p>
+                    <p class="text-secondary mb-3 text-truncate" style="font-size: 14px;">
+                        File: <strong id="deleteFileNameSpan">document.pdf</strong>
+                    </p>
+                    <div class="alert alert-warning border-0 p-3 d-flex align-items-start gap-2" style="border-radius: 10px; background-color: #fffbeb;">
+                        <i class="bi bi-info-circle-fill text-warning fs-5"></i>
+                        <div style="font-size: 13px; color: #b45309;" class="fw-semibold">
+                            This action cannot be undone. If you delete a mandatory document (Aadhaar or PAN), your profile verification will become incomplete.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 px-4 pb-4 pt-2">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius: 10px; height: 45px; font-weight: 600; padding: 0 20px;">Cancel</button>
+                    <form asp-action="DeleteDocument" asp-controller="Home" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="documentId" id="deleteDocIdInput" value="" />
+                        <button type="submit" class="btn btn-danger" style="border-radius: 10px; height: 45px; font-weight: 600; padding: 0 25px;">
+                            Delete Permanently
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOOTSTRAP BUNDLE JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function selectPreview(filePath, fileName, element) {
+            // Update iframe src
+            const iframe = document.getElementById("pdfPreviewIframe");
+            if (iframe) {
+                iframe.src = "/uploads/" + filePath;
+            }
+
+            // Update header filename
+            document.getElementById("previewDocName").textContent = fileName;
+
+            // Update top right separate view link
+            const openBtn = document.getElementById("previewOpenBtn");
+            if (openBtn) {
+                openBtn.href = "/uploads/" + filePath;
+            }
+
+            // Update visual active card selection
+            const cards = document.querySelectorAll(".doc-item-card");
+            cards.forEach(c => c.classList.remove("active-card"));
+            element.classList.add("active-card");
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Modal population setup
+            const replaceModal = document.getElementById('replaceModal');
+            replaceModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const docId = button.getAttribute('data-docid');
+                const docType = button.getAttribute('data-doctype');
+                
+                document.getElementById('replaceDocIdInput').value = docId;
+                document.getElementById('replaceDocType').textContent = docType + " Card";
+
+                // Reset file field and state
+                const fileInput = document.getElementById("replacePdfInput");
+                const replaceBtn = document.getElementById("confirmReplaceBtn");
+                const feedback = document.getElementById("replaceValidationFeedback");
+                if (fileInput) fileInput.value = "";
+                if (feedback) feedback.classList.add("d-none");
+                if (replaceBtn) replaceBtn.disabled = true;
+            });
+
+            const deleteModal = document.getElementById('deleteModal');
+            deleteModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const docId = button.getAttribute('data-docid');
+                const fileName = button.getAttribute('data-filename');
+                
+                document.getElementById('deleteDocIdInput').value = docId;
+                document.getElementById('deleteFileNameSpan').textContent = fileName;
+            });
+
+            // Replacement File Validator
+            const fileInput = document.getElementById("replacePdfInput");
+            const replaceBtn = document.getElementById("confirmReplaceBtn");
+            const feedback = document.getElementById("replaceValidationFeedback");
+
+            function validateReplaceFile() {
+                feedback.classList.add("d-none");
+                feedback.innerHTML = "";
+                replaceBtn.disabled = true;
+
+                const file = fileInput.files[0];
+
+                if (!file) return;
+
+                // 1. Extension
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (ext !== 'pdf') {
+                    feedback.innerHTML = "<i class='bi bi-exclamation-octagon-fill'></i> Error: Only PDF files are allowed.";
+                    feedback.classList.remove("d-none");
+                    fileInput.value = "";
+                    return;
+                }
+
+                // 2. Size
+                const maxSize = 2 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    feedback.innerHTML = "<i class='bi bi-exclamation-octagon-fill'></i> Error: File size exceeds the maximum limit of 2 MB.";
+                    feedback.classList.remove("d-none");
+                    fileInput.value = "";
+                    return;
+                }
+
+                // 3. Signature magic bytes (%PDF)
+                const blob = file.slice(0, 4);
+                const reader = new FileReader();
+                reader.onloadend = function(e) {
+                    if (e.target.readyState === FileReader.DONE) {
+                        const arr = new Uint8Array(e.target.result);
+                        if (arr[0] === 0x25 && arr[1] === 0x50 && arr[2] === 0x44 && arr[3] === 0x46) {
+                            replaceBtn.disabled = false;
+                        } else {
+                            feedback.innerHTML = "<i class='bi bi-exclamation-octagon-fill'></i> Error: Invalid PDF file signature. Spoofed or corrupted files are not allowed.";
+                            feedback.classList.remove("d-none");
+                            fileInput.value = "";
+                        }
+                    }
+                };
+                reader.readAsArrayBuffer(blob);
+            }
+
+            if (fileInput) {
+                fileInput.addEventListener("change", validateReplaceFile);
+            }
+        });
+    </script>
+</body>
+</html>

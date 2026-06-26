@@ -1,87 +1,348 @@
-﻿@model UserManagement.Models.LoginModel
+@model UserManagement.Models.LoginModel
+
 @{
     Layout = null;
 }
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - UserManagement</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+
+    <title>Login - User Management Portal</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" 
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
     <style>
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
             body {
-                background-color: #f4f7f6;
+                min-height: 100vh;
                 font-family: 'Segoe UI', sans-serif;
-                height: 100vh;
                 display: flex;
                 align-items: center;
-                justify-content: center;
+                justify-content: flex-start;
+                padding-left: 12%;
+                overflow-x: hidden;
+                position: relative;
+            }
+
+            .animated-bg-wrapper {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -2;
+            }
+
+            .animated-bg-image {
+                width: 100%;
+                height: 100%;
+                background-image: url('/loginbg.png');
+                background-size: cover;
+                background-position: center;
+                animation: bgmove 18s infinite ease-in-out;
+            }
+
+            .animated-bg-overlay {
+                position: absolute;
+                inset: 0;
+                background: rgba(0,0,0,0.35);
+            }
+
+            @@keyframes bgmove {
+
+                0% {
+                    transform: scale(1);
+                }
+
+                50% {
+                    transform: scale(1.05);
+                }
+
+                100% {
+                    transform: scale(1);
+                }
             }
 
             .login-card {
-                background: #ffffff;
-                border-radius: 12px;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-                width: 100%;
-                max-width: 400px;
-                padding: 2.5rem 2rem;
+                width: 500px;
+                background: rgba(255,255,255,.96);
+                backdrop-filter: blur(10px);
+                border-radius: 24px;
+                padding: 45px;
+                box-shadow: 0 25px 60px rgba(0,0,0,.25);
+                border: 1px solid rgba(255,255,255,0.25);
+                animation: popupForm 0.9s ease;
+            }
+
+            @@keyframes popupForm {
+                0% {
+                    opacity: 0;
+                    transform: scale(0.9) translateY(30px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: scale(1) translateY(0);
+                }
             }
 
             .brand-title {
-                color: #1a365d;
-                font-weight: 700;
-                margin-bottom: 1.5rem;
                 text-align: center;
+                font-size: 38px;
+                font-weight: 800;
+                color: #1E3A8A;
+                margin-bottom: 30px;
+            }
+
+            .form-label {
+                font-size: 13px;
+                font-weight: 700;
+                color: #475569;
+                margin-bottom: 8px;
+                text-transform: uppercase;
+            }
+
+            .form-control {
+                height: 52px;
+                border-radius: 12px;
+                border: 1px solid #CBD5E1;
+                font-size: 15px;
+                transition: 0.3s;
+            }
+
+            .form-control:focus {
+                border-color: #2563EB;
+                box-shadow: 0 0 0 4px rgba(37,99,235,.15);
+            }
+
+            .input-group-text {
+                border-radius: 12px 0 0 12px;
+                background: #F8FAFC;
+                border: 1px solid #CBD5E1;
+                color: #64748B;
+                padding: 0 16px;
+            }
+
+            .input-group .form-control {
+                border-radius: 0 12px 12px 0;
+            }
+
+            .input-group .btn-toggle {
+                border-radius: 0 12px 12px 0;
+                border: 1px solid #CBD5E1;
+                border-left: none;
+                background: #fff;
+                color: #64748B;
+                transition: 0.3s;
+            }
+
+            .input-group .btn-toggle:hover {
+                background: #F8FAFC;
+                color: #1E293B;
+            }
+
+            /* For input with both icon and toggle button */
+            .input-group .form-control-middle {
+                border-radius: 0;
+                border-right: none;
             }
 
             .btn-primary {
-                background-color: #2b6cb0;
+                height: 54px;
                 border: none;
-                padding: 0.6rem;
-                font-weight: 600;
-                border-radius: 6px;
+                border-radius: 12px;
+                font-weight: 700;
+                font-size: 16px;
+                background: linear-gradient(135deg,#1E3A8A,#2563EB);
+                transition: 0.3s;
             }
 
-                .btn-primary:hover {
-                    background-color: #1a365d;
+            .btn-primary:hover {
+                background: linear-gradient(135deg,#1D4ED8,#2563EB);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(37,99,235,.3);
+            }
+
+            /* Responsive media queries */
+            @@media(max-width:768px) {
+                body {
+                    padding-left: 0;
+                    justify-content: center;
+                    overflow-y: auto;
                 }
+
+                .login-card {
+                    width: 90%;
+                    max-width: 460px;
+                    padding: 35px 25px;
+                }
+
+                .brand-title {
+                    font-size: 30px;
+                }
+            }
+
     </style>
+
 </head>
+
 <body>
 
-    <div class="login-card">
-        <h3 class="brand-title">Account Login</h3>
+    <div class="animated-bg-wrapper">
+        <div class="animated-bg-image"></div>
+        <div class="animated-bg-overlay"></div>
+    </div>
 
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success p-2 small text-center shadow-sm">
-                @TempData["SuccessMessage"]
-            </div>
-        }
+    <div class="login-card">
+
+        <h2 class="brand-title">
+            Account Login
+        </h2>
 
         <form asp-action="Login" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            
+            @* CSRF Token protection *@
+            @Html.AntiForgeryToken()
 
+            <div asp-validation-summary="ModelOnly"
+                 class="alert alert-danger p-3 mb-4" style="border-radius: 12px; font-size: 14px;">
+            </div>
+
+            <!-- USERNAME -->
             <div class="mb-3">
-                <label asp-for="Username" class="form-label text-secondary fw-semibold">Username</label>
-                <input asp-for="Username" class="form-control" placeholder="Enter username" autocomplete="off" />
+                <label class="form-label">
+                    Username
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-person-fill"></i>
+                    </span>
+                    <input asp-for="Username"
+                           class="form-control"
+                           placeholder="Enter Username" 
+                           autocomplete="username" />
+                </div>
+                <span asp-validation-for="Username"
+                      class="text-danger small mt-1 d-block fw-semibold"></span>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="mb-3">
+                <label class="form-label">
+                    Password
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-lock-fill"></i>
+                    </span>
+                    <input asp-for="Password"
+                           type="password"
+                           class="form-control form-control-middle"
+                           id="passwordInput"
+                           placeholder="Enter Password" 
+                           autocomplete="current-password" />
+                    <button class="btn btn-toggle" type="button" id="passwordToggle" title="Toggle Password Visibility">
+                        <i class="bi bi-eye-fill"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="Password"
+                      class="text-danger small mt-1 d-block fw-semibold"></span>
+            </div>
+
+            <!-- REMEMBER ME & FORGOT PASSWORD -->
+            <div class="d-flex justify-content-between align-items-center mb-4 mt-2">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="rememberMe">
+                    <label class="form-check-label text-secondary fw-semibold" for="rememberMe" style="font-size: 13px; cursor: pointer;">
+                        Remember Me
+                    </label>
+                </div>
+                <a asp-action="ForgotPassword" asp-controller="Account" class="text-decoration-none fw-bold" style="color: #2563EB; font-size: 13px;">
+                    Forgot Password?
+                </a>
+            </div>
+
+            <!-- CAPTCHA VERIFICATION -->
+            <div class="mb-3">
+                <label class="form-label">
+                    Security Verification
+                </label>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="captcha-box flex-grow-1 shadow-sm d-flex justify-content-center align-items-center"
+                         style="background-image: url('/captcha.png'); background-size: cover; background-position: center; height: 52px; border-radius: 12px; font-weight: 800; font-size: 24px; letter-spacing: 5px; color: #1E3A8A; text-shadow: 1px 1px 2px #fff; border: 1px solid #CBD5E1; user-select: none;">
+                        @ViewBag.Captcha
+                    </div>
+                    <button type="button"
+                            class="btn btn-light border d-flex align-items-center justify-content-center"
+                            style="height: 52px; width: 52px; border-radius: 12px;"
+                            onclick="location.reload();"
+                            title="Refresh Captcha">
+                        <i class="bi bi-arrow-clockwise" style="font-size: 20px;"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="mb-4">
-                <label asp-for="Password" class="form-label text-secondary fw-semibold">Password</label>
-                <input asp-for="Password" type="password" class="form-control" placeholder="Enter password" />
+                <input asp-for="CaptchaCode"
+                       class="form-control"
+                       placeholder="Enter security code above" 
+                       autocomplete="off" />
+                <span asp-validation-for="CaptchaCode"
+                      class="text-danger small mt-1 d-block fw-semibold"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100 shadow-sm mb-3">Sign In</button>
+            <button type="submit"
+                    class="btn btn-primary w-100">
+                Sign In
+            </button>
 
-            <div class="text-center">
-                <span class="text-muted small">New here?</span>
-                <a asp-action="Register" class="small text-decoration-none fw-semibold" style="color: #2b6cb0;">Create an account</a>
+            <div class="text-center mt-4">
+                <span class="text-secondary" style="font-size: 14px;">New to the portal?</span>
+                <a asp-action="Register"
+                   class="text-decoration-none fw-bold ms-1" style="color: #2563EB;">
+                    Create Account
+                </a>
             </div>
+
         </form>
+
     </div>
 
+    <!-- Client-side Validation Scripts -->
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        // Password Visibility Toggle
+        document.getElementById('passwordToggle').addEventListener('click', function () {
+            var passwordInput = document.getElementById('passwordInput');
+            var icon = this.querySelector('i');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('bi-eye-fill');
+                icon.classList.add('bi-eye-slash-fill');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('bi-eye-slash-fill');
+                icon.classList.add('bi-eye-fill');
+            }
+        });
+    </script>
+
 </body>
+
 </html>

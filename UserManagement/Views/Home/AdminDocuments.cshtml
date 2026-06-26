@@ -1,0 +1,400 @@
+@model List<UserManagement.Models.UserDocumentModel>
+
+@{
+    Layout = null;
+    int srNo = 1;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document Verification Center</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <style>
+        body {
+            background: #0B132B;
+            min-height: 100vh;
+            padding: 30px;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .page-title {
+            font-weight: 800;
+            color: #0B132B;
+            font-size: 28px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* TABLE STYLING */
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 10px;
+        }
+
+        .table th {
+            background: #1C2541 !important;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+            padding: 18px 12px;
+            text-align: center;
+            vertical-align: middle;
+            border: none;
+        }
+
+        .table th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .table th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        .table td {
+            padding: 16px 12px;
+            text-align: center;
+            vertical-align: middle;
+            color: #334155;
+            font-size: 14px;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: #F8FAFC !important;
+        }
+
+        /* STATUS BADGES */
+        .badge-status {
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-approved {
+            background-color: rgba(25, 135, 84, 0.12);
+            color: #198754;
+            border: 1px solid rgba(25, 135, 84, 0.25);
+        }
+
+        .badge-rejected {
+            background-color: rgba(220, 53, 69, 0.12);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.25);
+        }
+
+        .badge-pending {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: #b58100;
+            border: 1px solid rgba(255, 193, 7, 0.25);
+        }
+
+        /* BUTTONS */
+        .btn-action {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border: none;
+        }
+
+        .btn-action-approve {
+            background-color: #198754;
+            color: white;
+        }
+
+        .btn-action-approve:hover {
+            background-color: #157347;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(25, 135, 84, 0.25);
+            color: white;
+        }
+
+        .btn-action-reject {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-action-reject:hover {
+            background-color: #bb2d3b;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.25);
+            color: white;
+        }
+
+        .btn-view {
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 5px 12px;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-dashboard {
+            font-weight: 600;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-dashboard:hover {
+            transform: translateY(-1px);
+        }
+
+        .completed-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: #94A3B8;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* RESPONSIVE */
+        @@media(max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .main-card {
+                padding: 20px;
+            }
+
+            .page-title {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid">
+
+        <div class="main-card">
+
+            <!-- HEADER -->
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+                <h2 class="page-title">
+                    <i class="bi bi-file-earmark-check-fill" style="color: #1C2541;"></i> 
+                    Document Verification Center
+                </h2>
+
+                <a asp-action="Dashboard" class="btn btn-secondary btn-dashboard">
+                    <i class="bi bi-arrow-left"></i> Back To Dashboard
+                </a>
+            </div>
+
+            <!-- MESSAGES -->
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm d-flex align-items-center gap-2 mb-4" style="border-radius: 12px; font-size: 14px;">
+                    <i class="bi bi-check-circle-fill" style="font-size: 18px;"></i>
+                    <div>@TempData["Success"]</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm d-flex align-items-center gap-2 mb-4" style="border-radius: 12px; font-size: 14px;">
+                    <i class="bi bi-exclamation-triangle-fill" style="font-size: 18px;"></i>
+                    <div>@TempData["Error"]</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <!-- TABLE -->
+            <div class="table-responsive" style="border-radius: 12px; border: 1px solid #E2E8F0;">
+
+                <table class="table table-hover mb-0">
+
+                    <thead>
+                        <tr>
+                            <th width="70">Sr</th>
+                            <th width="120">Doc ID</th>
+                            <th width="100">User ID</th>
+                            <th>Username</th>
+                            <th>Document Type</th>
+                            <th>File Attachment</th>
+                            <th>Status</th>
+                            <th width="280">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var doc in Model)
+                            {
+                                string status = (doc.Status ?? "").Trim().ToLower();
+
+                                <tr>
+                                    <td><strong>@srNo</strong></td>
+                                    <td>#@doc.DocumentId</td>
+                                    <td>@doc.UserId</td>
+                                    <td class="fw-semibold">@doc.Username</td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border px-2.5 py-1.5" style="border-radius: 6px; font-size: 13px;">
+                                            @doc.DocumentType
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="/uploads/@doc.FilePath"
+                                           target="_blank"
+                                           class="btn btn-outline-primary btn-view">
+                                            <i class="bi bi-eye-fill"></i> View File
+                                        </a>
+                                    </td>
+                                    <td>
+                                        @if (status == "approved")
+                                        {
+                                            <span class="badge-status badge-approved">
+                                                <i class="bi bi-check-circle-fill"></i> Approved
+                                            </span>
+                                        }
+                                        else if (status == "rejected")
+                                        {
+                                            <span class="badge-status badge-rejected">
+                                                <i class="bi bi-x-circle-fill"></i> Rejected
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge-status badge-pending">
+                                                <i class="bi bi-hourglass-split"></i> Pending
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (status == "pending")
+                                        {
+                                            <button type="button"
+                                                    class="btn-action btn-action-approve"
+                                                    onclick="showConfirmModal('/Home/ApproveDocument?documentId=@doc.DocumentId', 'Approve', '@doc.DocumentType', '@doc.Username');">
+                                                <i class="bi bi-check-lg"></i> Approve
+                                            </button>
+
+                                            <button type="button"
+                                                    class="btn-action btn-action-reject"
+                                                    onclick="showConfirmModal('/Home/RejectDocument?documentId=@doc.DocumentId', 'Reject', '@doc.DocumentType', '@doc.Username');">
+                                                <i class="bi bi-x-lg"></i> Reject
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <span class="completed-text">
+                                                <i class="bi bi-lock-fill"></i> Action Lock
+                                            </span>
+                                        }
+                                    </td>
+                                </tr>
+
+                                srNo++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center py-5 text-secondary">
+                                    <i class="bi bi-folder-x" style="font-size: 40px; display: block; margin-bottom: 10px;"></i>
+                                    No documents pending verification.
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- BOOTSTRAP 5 CONFIRMATION MODAL -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 18px; border: none; box-shadow: 0 15px 30px rgba(0,0,0,0.35);">
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <h5 class="modal-title fw-bold" id="confirmModalLabel">Confirm Action</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-4 py-3">
+                    <p id="confirmModalBody" class="mb-0 text-secondary" style="font-size: 15px; line-height: 1.6;"></p>
+                </div>
+                <div class="modal-footer border-0 pt-0 pb-4 px-4 gap-2">
+                    <button type="button" class="btn btn-light px-3 py-2 fw-semibold" data-bs-dismiss="modal" style="border-radius: 10px; font-size: 14px;">Cancel</button>
+                    <a id="confirmModalActionBtn" href="#" class="btn px-4 py-2 fw-semibold" style="border-radius: 10px; font-size: 14px;">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function showConfirmModal(actionUrl, actionType, docType, username) {
+            var modalTitle = document.getElementById('confirmModalLabel');
+            var modalBody = document.getElementById('confirmModalBody');
+            var actionBtn = document.getElementById('confirmModalActionBtn');
+            
+            if (actionType === 'Approve') {
+                modalTitle.innerText = 'Approve Document';
+                modalTitle.className = 'modal-title fw-bold text-success';
+                modalBody.innerHTML = 'Are you sure you want to <strong>approve</strong> the <strong>' + docType + '</strong> document for user <strong>' + username + '</strong>? This action will mark their document as verified.';
+                actionBtn.className = 'btn btn-success px-4 py-2 fw-semibold';
+                actionBtn.innerText = 'Yes, Approve';
+            } else {
+                modalTitle.innerText = 'Reject Document';
+                modalTitle.className = 'modal-title fw-bold text-danger';
+                modalBody.innerHTML = 'Are you sure you want to <strong>reject</strong> the <strong>' + docType + '</strong> document for user <strong>' + username + '</strong>? The user will need to re-upload their document.';
+                actionBtn.className = 'btn btn-danger px-4 py-2 fw-semibold';
+                actionBtn.innerText = 'Yes, Reject';
+            }
+            
+            actionBtn.href = actionUrl;
+            
+            var myModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            myModal.show();
+        }
+    </script>
+
+</body>
+</html>

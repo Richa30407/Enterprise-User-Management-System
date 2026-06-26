@@ -1,0 +1,357 @@
+@model dynamic
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Documents - User Management</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            background-image: url('/User.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 40px 0;
+        }
+
+        .dashboard-container {
+            margin-left: 8%;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .page-heading {
+            color: white;
+            font-size: 45px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .main-card {
+            background: #ffffff;
+            border-radius: 25px;
+            padding: 40px 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+        }
+
+        .upload-section-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section-card:hover {
+            border-color: #cbd5e1;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tag-mandatory {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            background: #fef2f2;
+            color: #ef4444;
+            padding: 2px 8px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-optional {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            background: #f1f5f9;
+            color: #64748b;
+            padding: 2px 8px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-action {
+            height: 52px;
+            border-radius: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+        }
+
+        @@media(max-width:768px) {
+            .dashboard-container {
+                margin: 20px;
+                width: calc(100% - 40px);
+            }
+            .main-card {
+                padding: 30px;
+            }
+            .page-heading {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- HEADING OUTSIDE CARD -->
+        <h1 class="page-heading">
+            Upload Documents
+        </h1>
+
+        <!-- CARD -->
+        <div class="main-card">
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success border-0 p-3 mb-4 d-flex align-items-center gap-2.5" style="border-radius: 12px; font-size: 14px;">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <div>@TempData["Success"]</div>
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger border-0 p-3 mb-4 d-flex align-items-center gap-2.5" style="border-radius: 12px; font-size: 14px;">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <div>@TempData["Error"]</div>
+                </div>
+            }
+
+            <form id="uploadDocsForm" asp-action="UploadDocuments" asp-controller="Home" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+
+                <!-- 1. AADHAAR CARD SECTION -->
+                <div class="upload-section-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="section-title">
+                            <i class="bi bi-person-vcard text-primary" style="font-size: 20px;"></i> Aadhaar Card <span class="text-danger">*</span>
+                        </span>
+                    </div>
+
+                    @if (ViewBag.AadhaarUploaded == true)
+                    {
+                        <div class="alert alert-success border-0 p-2.5 mb-0 d-flex align-items-center gap-2" style="border-radius: 10px; font-size: 13.5px; font-weight: 600;">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <div>Document Already Uploaded (Go to "View Uploaded Documents" to replace or delete)</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mb-2">
+                            <input type="file" name="aadhaarFile" id="aadhaarFileInput" class="form-control" accept=".pdf" required style="height: 48px; border-radius: 10px; padding: 10px;" />
+                            <div class="form-text text-secondary mt-1" style="font-size: 12px;">Only genuine PDF files up to 2 MB are allowed.</div>
+                        </div>
+                        <div id="aadhaarFeedback" class="alert alert-danger p-2 mt-2 fw-semibold d-none" style="border-radius: 10px; font-size: 13px;"></div>
+                    }
+                </div>
+
+                <!-- 2. PAN CARD SECTION -->
+                <div class="upload-section-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="section-title">
+                            <i class="bi bi-credit-card-2-front text-primary" style="font-size: 20px;"></i> PAN Card <span class="text-danger">*</span>
+                        </span>
+                    </div>
+
+                    @if (ViewBag.PanUploaded == true)
+                    {
+                        <div class="alert alert-success border-0 p-2.5 mb-0 d-flex align-items-center gap-2" style="border-radius: 10px; font-size: 13.5px; font-weight: 600;">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <div>Document Already Uploaded</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mb-2">
+                            <input type="file" name="panFile" id="panFileInput" class="form-control" accept=".pdf" required style="height: 48px; border-radius: 10px; padding: 10px;" />
+                            <div class="form-text text-secondary mt-1" style="font-size: 12px;">Only genuine PDF files up to 2 MB are allowed.</div>
+                        </div>
+                        <div id="panFeedback" class="alert alert-danger p-2 mt-2 fw-semibold d-none" style="border-radius: 10px; font-size: 13px;"></div>
+                    }
+                </div>
+
+                <!-- 3. OTHER DOCUMENT SECTION -->
+                <div class="upload-section-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="section-title">
+                            <i class="bi bi-file-earmark-text text-primary" style="font-size: 20px;"></i> Other Document
+                        </span>
+                    </div>
+
+                    @if (ViewBag.OtherUploaded == true)
+                    {
+                        <div class="alert alert-success border-0 p-2.5 mb-0 d-flex align-items-center gap-2" style="border-radius: 10px; font-size: 13.5px; font-weight: 600;">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <div>Document Already Uploaded</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mb-2">
+                            <input type="file" name="otherFile" id="otherFileInput" class="form-control" accept=".pdf" style="height: 48px; border-radius: 10px; padding: 10px;" />
+                            <div class="form-text text-secondary mt-1" style="font-size: 12px;">Only genuine PDF files up to 2 MB are allowed.</div>
+                        </div>
+                        <div id="otherFeedback" class="alert alert-danger p-2 mt-2 fw-semibold d-none" style="border-radius: 10px; font-size: 13px;"></div>
+                    }
+                </div>
+
+                <div class="d-flex flex-column gap-3 mt-4">
+                    <button type="submit" id="submitBtn" class="btn btn-success btn-action w-100" disabled>
+                        <i class="bi bi-cloud-arrow-up-fill"></i> Upload Documents
+                    </button>
+
+                    <a asp-controller="Home" asp-action="Dashboard" class="btn btn-dark btn-action w-100">
+                        <i class="bi bi-arrow-left"></i> Cancel and Back
+                    </a>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById("uploadDocsForm");
+            const submitBtn = document.getElementById("submitBtn");
+
+            const fields = [
+                { input: document.getElementById("aadhaarFileInput"), feedback: document.getElementById("aadhaarFeedback"), isMandatory: true, isValid: false },
+                { input: document.getElementById("panFileInput"), feedback: document.getElementById("panFeedback"), isMandatory: true, isValid: false },
+                { input: document.getElementById("otherFileInput"), feedback: document.getElementById("otherFeedback"), isMandatory: false, isValid: true }
+            ];
+
+            function checkFormValidity() {
+                let formValid = true;
+                
+                for (const field of fields) {
+                    if (field.input) {
+                        const file = field.input.files[0];
+                        if (field.isMandatory) {
+                            if (!file || !field.isValid) {
+                                formValid = false;
+                                break;
+                            }
+                        } else {
+                            if (file && !field.isValid) {
+                                formValid = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                submitBtn.disabled = !formValid;
+            }
+
+            function validateFileField(field) {
+                const input = field.input;
+                const feedback = field.feedback;
+                const file = input.files[0];
+
+                feedback.classList.add("d-none");
+                feedback.innerHTML = "";
+                field.isValid = false;
+
+                if (!file) {
+                    if (!field.isMandatory) {
+                        field.isValid = true;
+                    }
+                    checkFormValidity();
+                    return;
+                }
+
+                // 1. Validate File Extension
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (ext !== 'pdf') {
+                    feedback.innerHTML = "<i class='bi bi-exclamation-octagon-fill'></i> Error: Only PDF files are allowed.";
+                    feedback.classList.remove("d-none");
+                    input.value = "";
+                    checkFormValidity();
+                    return;
+                }
+
+                // 2. Validate File Size (2 MB)
+                const maxSize = 2 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    feedback.innerHTML = "<i class='bi bi-exclamation-octagon-fill'></i> Error: File size exceeds the maximum limit of 2 MB.";
+                    feedback.classList.remove("d-none");
+                    input.value = "";
+                    checkFormValidity();
+                    return;
+                }
+
+                // 3. Validate Magic Bytes (%PDF = 0x25 0x50 0x44 0x46)
+                const blob = file.slice(0, 4);
+                const reader = new FileReader();
+                reader.onloadend = function(e) {
+                    if (e.target.readyState === FileReader.DONE) {
+                        const arr = new Uint8Array(e.target.result);
+                        if (arr[0] === 0x25 && arr[1] === 0x50 && arr[2] === 0x44 && arr[3] === 0x46) {
+                            field.isValid = true;
+                        } else {
+                            feedback.innerHTML = "<i class='bi bi-exclamation-octagon-fill'></i> Error: Invalid PDF file signature. Spoofed or corrupted files are not allowed.";
+                            feedback.classList.remove("d-none");
+                            input.value = "";
+                        }
+                        checkFormValidity();
+                    }
+                };
+                reader.readAsArrayBuffer(blob);
+            }
+
+            for (const field of fields) {
+                if (field.input) {
+                    field.input.addEventListener("change", function() {
+                        validateFileField(field);
+                    });
+                }
+            }
+
+            checkFormValidity();
+        });
+    </script>
+</body>
+</html>
