@@ -441,22 +441,18 @@
                             Assigned Role
                         </label>
 
-                        <select asp-for="RoleId"
-                                class="form-select w-100">
+                       <select asp-for="RoleId"
+        class="form-select w-100">
 
-                            <option value="">
-                                -- Select Role --
-                            </option>
+    <option value="1">
+        Admin
+    </option>
 
-                            <option value="1">
-                                Admin
-                            </option>
+    <option value="2">
+        User
+    </option>
 
-                            <option value="2">
-                                User
-                            </option>
-
-                        </select>
+</select>
                         <span asp-validation-for="RoleId" class="text-danger small mt-1 d-block fw-semibold"></span>
 
                     </div>
