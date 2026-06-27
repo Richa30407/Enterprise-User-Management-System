@@ -1,11 +1,18 @@
 using Npgsql;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.DataProtection;
+using System.IO;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo("/tmp/keys"))
+    .SetApplicationName("UserManagement");
+
 
 // Register application services
 builder.Services.AddHttpContextAccessor();
