@@ -178,8 +178,20 @@ namespace UserManagement.Middleware
                 logger.LogError("Database", "SaveErrorLog", $"Failed to save/update error log in database: {dbEx.Message}", dbEx);
             }
 
+            // If the error occurred on the error page itself or status code handler, prevent infinite redirect loop
+            var path = context.Request.Path.Value ?? "";
+            if (path.Contains("/Home/Error", StringComparison.OrdinalIgnoreCase) || 
+                path.Contains("/Home/StatusCodeHandler", StringComparison.OrdinalIgnoreCase))
+            {
+                context.Response.StatusCode = 500;
+                context.Response.ContentType = "text/html";
+                await context.Response.WriteAsync($"<html><head><title>Internal Server Error</title></head><body style=\"font-family: sans-serif; padding: 20px; background-color: #f8d7da; color: #721c24;\"><h1>Internal Server Error</h1><p>An unexpected error occurred while processing your request.</p><p>Correlation ID: {correlationId}</p></body></html>");
+                return;
+            }
+
             // Redirect user to the friendly error page
             context.Response.Redirect($"/Home/Error?correlationId={Uri.EscapeDataString(correlationId)}");
+
         }
 
         private string ClassifySeverity(Exception exception)

@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo("/tmp/keys"))
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(Path.GetTempPath(), "UserManagement-Keys")))
     .SetApplicationName("UserManagement");
 
 
